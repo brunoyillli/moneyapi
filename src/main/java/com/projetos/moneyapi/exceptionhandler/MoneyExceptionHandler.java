@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
+
 @ControllerAdvice
 public class MoneyExceptionHandler extends ResponseEntityExceptionHandler{
 	
@@ -54,6 +56,16 @@ public class MoneyExceptionHandler extends ResponseEntityExceptionHandler{
 		List<Erro> erros = Arrays.asList( new Erro(mensagemUsuario, mensagemDesenvolvedor));
 		
 		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+	}
+	
+	@ExceptionHandler({MysqlDataTruncation.class})
+	public ResponseEntity<Object> handleMysqlDataTruncation (MysqlDataTruncation ex, WebRequest request){
+		String mensagemUsuario = messageSource.getMessage("mensagem.invalida", 
+				null,LocaleContextHolder.getLocale());
+		String mensagemDesenvolvedor = ex.toString();
+		List<Erro> erros = Arrays.asList( new Erro(mensagemUsuario, mensagemDesenvolvedor));
+		
+		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 	
 	private List<Erro> criarListaDeErros(BindingResult bindingResult){
