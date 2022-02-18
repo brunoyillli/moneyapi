@@ -1,6 +1,5 @@
 package com.projetos.moneyapi.resource;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,16 +13,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.projetos.moneyapi.event.RecursoCriadoEvent;
 import com.projetos.moneyapi.model.Categoria;
 import com.projetos.moneyapi.repository.CategoriaRepository;
+import com.projetos.moneyapi.service.CategoriaService;
 
 @RestController
 @RequestMapping("/categorias")
@@ -34,6 +34,9 @@ public class CategoriaResource {
 	
 	@Autowired
 	private ApplicationEventPublisher publisher;
+	
+	@Autowired
+	private CategoriaService categoriaService;
 	
 	@GetMapping
 	public List<Categoria> listar(){
@@ -59,5 +62,11 @@ public class CategoriaResource {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void remover(@PathVariable Long codigo) {
 		categoriaRepository.deleteById(codigo);
+	}
+	
+	@PutMapping("/{codigo}")
+	public ResponseEntity<Categoria> atualizar (@PathVariable Long codigo, @Valid @RequestBody Categoria categoria){
+		Categoria categoriaSalva = categoriaService.atualizar(codigo, categoria);
+		return ResponseEntity.ok(categoriaSalva);
 	}
 }
