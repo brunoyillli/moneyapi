@@ -14,7 +14,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import com.projetos.moneyapi.model.Lancamento;
 import com.projetos.moneyapi.repository.filter.LancamentoFilter;
@@ -36,7 +36,6 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery{
 		
 		TypedQuery<Lancamento> query = manager.createQuery(criteria);
 		adicionarRestricoesDePaginacao(query, pageable);
-		
 		return new PageImpl<>(query.getResultList(), pageable, total(lancamentoFilter));	
 	}
 
@@ -44,7 +43,7 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery{
 			Root<Lancamento> root) {
 		List<Predicate> predicates = new ArrayList<>();
 		
-		if(!StringUtils.isEmpty(lancamentoFilter.getDescricao())) {
+		if(!ObjectUtils.isEmpty(lancamentoFilter.getDescricao())) {
 			predicates.add(builder.like(	
 					builder.lower(root.get("descricao")), "%" + 
 			lancamentoFilter.getDescricao().toLowerCase() + "%"));
